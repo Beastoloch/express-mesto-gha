@@ -48,7 +48,7 @@ module.exports.updateUser = (req, res) => {
         res.status(404).send({ message: "Пользователь не найден" });
         return;
       }
-      res.send({data: user})
+      res.send({ data: user })
     })
     .catch(err => {
       if(err.name === 'ValidationError'){
