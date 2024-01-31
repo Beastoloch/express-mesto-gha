@@ -7,7 +7,7 @@ const {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then(users => res.send({data: users}))
-    .catch(err => res.status(ERROR_DEFAULT_CODE).send({ message: "Произошла ошибка" }));
+    .catch(() => res.status(ERROR_DEFAULT_CODE).send({ message: "Произошла ошибка" }));
 };
 
 module.exports.getUsersById = (req, res) => {

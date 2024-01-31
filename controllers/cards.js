@@ -8,7 +8,7 @@ const {
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then(cards => res.send({ data: cards }))
-    .catch(err => res.status(ERROR_DEFAULT_CODE).send({ message: "Некорректные данные" }));
+    .catch(() => res.status(ERROR_DEFAULT_CODE).send({ message: "Некорректные данные" }));
 };
 
 module.exports.createCard = (req, res) => {
