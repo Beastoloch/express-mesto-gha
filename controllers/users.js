@@ -9,13 +9,20 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUsersById = (req, res) => {
   User.findById(req.params.userId)
     .then(user => {
+      console.log(user);
       if(!user){
         res.status(404).send({ message: "Пользователь не найден" });
         return;
       }
       res.send({data: user})
     })
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if(err.name === 'CastError'){
+        res.status(400).send({ message: 'Неккоректный _id пользователя' });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -27,16 +34,15 @@ module.exports.createUser = (req, res) => {
     })
     .catch(err => {
       if(err.name === 'ValidationError'){
-        res.status(400).send({ message: err.message })
+        res.status(400).send({ message: err.message });
+        return;
       }
-      else{
-        res.status(500).send({ message: err.message })
-      }
+      res.status(500).send({ message: err.message });
     });
 };
 
 module.exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, req.body, { runValidators: true })
+  User.findByIdAndUpdate(req.user._id, req.body, { runValidators: true, new: true })
     .then(user => {
       if(!user){
         res.status(404).send({ message: "Пользователь не найден" });
@@ -46,18 +52,17 @@ module.exports.updateUser = (req, res) => {
     })
     .catch(err => {
       if(err.name === 'ValidationError'){
-        res.status(400).send({ message: err.message })
+        res.status(400).send({ message: err.message });
+        return;
       }
-      else{
-        res.status(500).send({ message: err.message })
-      }
+      res.status(500).send({ message: err.message });
     });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { link } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, link, { runValidators: true })
+  User.findByIdAndUpdate(req.user._id, link, { runValidators: true, new: true  })
     .then(user => {
       if(!user){
         res.status(404).send({ message: "Пользователь не найден" });
@@ -67,10 +72,9 @@ module.exports.updateUserAvatar = (req, res) => {
     })
     .catch(err => {
       if(err.name === 'ValidationError'){
-        res.status(400).send({ message: err.message })
+        res.status(400).send({ message: err.message });
+        return;
       }
-      else{
-        res.status(500).send({ message: err.message })
-      }
+      res.status(500).send({ message: err.message });
     });
 };

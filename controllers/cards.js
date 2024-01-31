@@ -16,10 +16,9 @@ module.exports.createCard = (req, res) => {
     .catch(err => {
       if(err.name === 'ValidationError'){
         res.status(400).send({ message: err.message });
+        return;
       }
-      else{
-        res.status(500).send({ message: err.message })
-      }
+      res.status(500).send({ message: err.message });
     });
 };
 
@@ -32,7 +31,13 @@ module.exports.deleteCard = (req, res) => {
       }
       res.send({data: "Карточка успешно удалена"})
     })
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if(err.name === 'CastError'){
+        res.status(400).send({ message: 'Неккоректный _id пользователя' });
+        return;
+      }
+      res.status(500).send({ message: err.message })
+    });
 };
 
 module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
@@ -50,10 +55,13 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   .catch(err => {
     if(err.name === 'ValidationError'){
       res.status(400).send({ message: err.message });
+      return;
     }
-    else{
-      res.status(500).send({ message: err.message })
+    if(err.name === 'CastError'){
+      res.status(400).send({ message: 'Неккоректный _id пользователя' });
+      return;
     }
+    res.status(500).send({ message: err.message })
   });
 
 module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
@@ -71,8 +79,11 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .catch(err => {
     if(err.name === 'ValidationError'){
       res.status(400).send({ message: err.message });
+      return;
     }
-    else{
-      res.status(500).send({ message: err.message })
+    if(err.name === 'CastError'){
+      res.status(400).send({ message: 'Неккоректный _id пользователя' });
+      return;
     }
+    res.status(500).send({ message: err.message })
   });
