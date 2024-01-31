@@ -60,9 +60,9 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  const { link } = req.body;
+  const avatar  = req.body;
 
-  User.findByIdAndUpdate(req.user._id, link, { runValidators: true, new: true  })
+  User.findByIdAndUpdate(req.user._id, avatar, { runValidators: true, new: true  })
     .then(user => {
       if(!user){
         res.status(404).send({ message: "Пользователь не найден" });
