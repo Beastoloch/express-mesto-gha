@@ -57,11 +57,20 @@ module.exports.createUser = (req, res, next) => {
       email, password: hash, name, about, avatar,
     })
       .then((user) => {
-        res.status(SUCCESS_AUTH_CODE).send({ data: user });
+        res.status(SUCCESS_AUTH_CODE).send({
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          password,
+          _id: user._id,
+        });
       })
       .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(ERROR_BAD_INPUT_CODE).send({ message: 'Некорректные данные' });
+        if(err.name === 'ValidationError'){
+          const err = new Error("Некорректные данные");
+          err.statusCode = ERROR_BAD_INPUT_CODE;
+          next(err);
           return;
         }
         if (err.code === 11000) {
@@ -106,6 +115,12 @@ module.exports.updateUserAvatar = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
+      if(err.name === 'ValidationError'){
+        const err = new Error("Некорректные данные");
+        err.statusCode = ERROR_BAD_INPUT_CODE;
+        next(err);
+        return;
+      }
       next(err);
     });
 };
