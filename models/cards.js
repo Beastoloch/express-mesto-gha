@@ -10,10 +10,6 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    validate: {
-      validator: (url) => validator.isURL(url),
-      message: 'Несуществующий URL',
-    },
     required: [true, 'Поле avatar должно быть заполнено'],
   },
   owner: {
