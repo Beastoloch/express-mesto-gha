@@ -67,10 +67,10 @@ module.exports.createUser = (req, res, next) => {
         });
       })
       .catch((err) => {
-        if(err.name === 'ValidationError'){
-          const err = new Error("Некорректные данные");
-          err.statusCode = ERROR_BAD_INPUT_CODE;
-          next(err);
+        if (err.name === 'ValidationError') {
+          const e = new Error('Некорректные данные');
+          e.statusCode = ERROR_BAD_INPUT_CODE;
+          next(e);
           return;
         }
         if (err.code === 11000) {
@@ -115,10 +115,10 @@ module.exports.updateUserAvatar = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if(err.name === 'ValidationError'){
-        const err = new Error("Некорректные данные");
-        err.statusCode = ERROR_BAD_INPUT_CODE;
-        next(err);
+      if (err.name === 'ValidationError') {
+        const e = new Error('Некорректные данные');
+        e.statusCode = ERROR_BAD_INPUT_CODE;
+        next(e);
         return;
       }
       next(err);
