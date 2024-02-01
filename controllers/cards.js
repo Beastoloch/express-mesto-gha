@@ -2,7 +2,7 @@ const Card = require('../models/cards');
 const {
   ERROR_BAD_INPUT_CODE,
   ERROR_NOT_FOUND_CODE,
-  ERROR_AUTH_CODE,
+  ERROR_AUTH_CODE, ERROR_FORBIDDEN_CODE,
 } = require('../utility/constants');
 
 module.exports.getCards = (req, res, next) => {
@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
       if (!(card.owner.equals(req.user._id))) {
         const err = new Error('Недостаточно прав');
-        err.statusCode = ERROR_AUTH_CODE;
+        err.statusCode = ERROR_FORBIDDEN_CODE;
         next(err);
         return;
       }

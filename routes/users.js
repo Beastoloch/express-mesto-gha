@@ -6,14 +6,15 @@ const {
 
 router.get('/', getUsers);
 router.get('/me', getCurrentUser);
-router.get('/:userId', getUsersById);
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().hex().length(24),
+  }),
+}), getUsersById);
 router.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-  }),
-  query: Joi.object().keys({
-    _id: Joi.string().hex().length(24),
   }),
 }), updateUser);
 router.patch('/me/avatar', celebrate({
