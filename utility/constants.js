@@ -9,7 +9,9 @@ module.exports.ERROR_DEFAULT_CODE = 500;
 module.exports.allowedCors = [
   'https://praktikum.tk',
   'http://praktikum.tk',
+  'http://localhost:3000',
   'localhost:3000',
+  'https://mesto.beastoloch.nomoredomainsmonster.ru/',
   'http://mesto.beastoloch.nomoredomainsmonster.ru/',
 ];
 
