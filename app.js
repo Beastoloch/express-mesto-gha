@@ -1,10 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const { errors, celebrate, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
+const { errors, celebrate, Joi } = require('celebrate');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { login, createUser } = require('./controllers/users');
 const {
   ERROR_DEFAULT_CODE,
@@ -50,6 +52,14 @@ app.use((req, res, next) => {
   return null;
 });
 
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -70,6 +80,8 @@ app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use(errorLogger);
 
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND_CODE).send({ message: 'Неверный путь' });
