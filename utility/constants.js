@@ -5,3 +5,12 @@ module.exports.ERROR_FORBIDDEN_CODE = 403;
 module.exports.ERROR_NOT_FOUND_CODE = 404;
 module.exports.ERROR_TAKEN_EMAIL_CODE = 409;
 module.exports.ERROR_DEFAULT_CODE = 500;
+
+module.exports.allowedCors = [
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'localhost:3000',
+  'http://mesto.beastoloch.nomoredomainsmonster.ru/',
+];
+
+module.exports.DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
