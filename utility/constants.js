@@ -11,8 +11,8 @@ module.exports.allowedCors = [
   'http://praktikum.tk',
   'http://localhost:3000',
   'localhost:3000',
-  'https://mesto.beastoloch.nomoredomainsmonster.ru/',
-  'http://mesto.beastoloch.nomoredomainsmonster.ru/',
+  'https://mesto.beastoloch.nomoredomainsmonster.ru',
+  'http://mesto.beastoloch.nomoredomainsmonster.ru',
 ];
 
 module.exports.DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
