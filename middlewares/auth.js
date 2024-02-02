@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+const {ERROR_AUTH_CODE} = require("../utility/constants");
 
 const handleAuthError = (res) => {
   res
-    .status(401)
+    .status(ERROR_AUTH_CODE)
     .send({ message: 'Необходима авторизация' });
 };
 

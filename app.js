@@ -6,7 +6,7 @@ const { errors, celebrate, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
-const { ERROR_DEFAULT_CODE } = require('./utility/constants');
+const { ERROR_DEFAULT_CODE, ERROR_NOT_FOUND_CODE} = require('./utility/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -48,13 +48,13 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Неверный путь' });
+  res.status(ERROR_NOT_FOUND_CODE).send({ message: 'Неверный путь' });
 });
 
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = ERROR_DEFAULT_CODE, message } = err;
-  res.status(statusCode).send({ message: statusCode === ERROR_DEFAULT_CODE ? 'Произошла ошибка' : message });
+  res.status(statusCode).send({ message: statusCode === ERROR_DEFAULT_CODE ? 'На сервере произошла ошибка' : message });
   next();
 });
 
