@@ -10,7 +10,8 @@ const {
   ERROR_DEFAULT_CODE,
   ERROR_NOT_FOUND_CODE,
   allowedCors,
-  DEFAULT_ALLOWED_METHODS} = require('./utility/constants');
+  DEFAULT_ALLOWED_METHODS,
+} = require('./utility/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -30,7 +31,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(helmet());
 app.use(limiter);
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
   const requestHeaders = req.headers['access-control-request-headers'];
@@ -46,6 +47,7 @@ app.use(function(req, res, next) {
   }
 
   next();
+  return null;
 });
 
 app.post('/signin', celebrate({

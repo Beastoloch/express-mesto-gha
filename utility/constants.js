@@ -15,4 +15,4 @@ module.exports.allowedCors = [
   'http://mesto.beastoloch.nomoredomainsmonster.ru',
 ];
 
-module.exports.DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
+module.exports.DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
