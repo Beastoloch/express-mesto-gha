@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {ERROR_AUTH_CODE} = require("../utility/constants");
+const { ERROR_AUTH_CODE } = require('../utility/constants');
 
 const handleAuthError = (res) => {
   res

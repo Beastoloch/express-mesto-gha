@@ -6,7 +6,7 @@ const { errors, celebrate, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
-const { ERROR_DEFAULT_CODE, ERROR_NOT_FOUND_CODE} = require('./utility/constants');
+const { ERROR_DEFAULT_CODE, ERROR_NOT_FOUND_CODE } = require('./utility/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
