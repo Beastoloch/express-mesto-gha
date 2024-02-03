@@ -4,12 +4,12 @@ const User = require('../models/users');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const {
-  ERROR_BAD_INPUT_CODE,
-  ERROR_NOT_FOUND_CODE,
-  ERROR_AUTH_CODE,
   SUCCESS_AUTH_CODE,
-  ERROR_TAKEN_EMAIL_CODE,
 } = require('../utility/constants');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
+const ConflictError = require('../errors/conflict-error');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -21,21 +21,17 @@ module.exports.getUsersById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        const err = new Error('Пользователь не найден');
-        err.statusCode = ERROR_NOT_FOUND_CODE;
-        next(err);
+        next(new NotFoundError('Пользователь не найден'));
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const e = new Error('Неккоректный _id пользователя');
-        e.statusCode = ERROR_BAD_INPUT_CODE;
-        next(e);
-        return;
+        next(new BadRequestError('Неккоректный _id пользователя'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -69,15 +65,12 @@ module.exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          const e = new Error('Некорректные данные');
-          e.statusCode = ERROR_BAD_INPUT_CODE;
-          next(e);
+          console.log(err);
+          next(new BadRequestError('Некорректные данные'));
           return;
         }
         if (err.code === 11000) {
-          const e = new Error('Этот email уже зарегистрирован');
-          e.statusCode = ERROR_TAKEN_EMAIL_CODE;
-          next(e);
+          next(new ConflictError('Этот email уже зарегистрирован'));
           return;
         }
         next(err);
@@ -90,15 +83,17 @@ module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((user) => {
       if (!user) {
-        const err = new Error('Пользователь не найден');
-        err.statusCode = ERROR_NOT_FOUND_CODE;
-        next(err);
+        next(new NotFoundError('Пользователь не найден'));
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -108,21 +103,17 @@ module.exports.updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, avatar, { runValidators: true, new: true })
     .then((user) => {
       if (!user) {
-        const err = new Error('Пользователь не найден');
-        err.statusCode = ERROR_NOT_FOUND_CODE;
-        next(err);
+        next(new NotFoundError('Пользователь не найден'));
         return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const e = new Error('Некорректные данные');
-        e.statusCode = ERROR_BAD_INPUT_CODE;
-        next(e);
-        return;
+        next(new BadRequestError('Некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -141,10 +132,9 @@ module.exports.login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === 'Неправильные почта или пароль') {
-        const e = new Error(err.message);
-        e.statusCode = ERROR_AUTH_CODE;
-        next(e);
+        next(new UnauthorizedError('Неправильные почта или пароль'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };

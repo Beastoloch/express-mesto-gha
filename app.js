@@ -5,14 +5,16 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
+const { Error } = require('mongoose');
+const NotFoundError = require('./errors/not-found-error');
+const centreErrors = require('./middlewares/errors');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { login, createUser } = require('./controllers/users');
 const {
-  ERROR_DEFAULT_CODE,
-  ERROR_NOT_FOUND_CODE,
   allowedCors,
   DEFAULT_ALLOWED_METHODS,
+  regexURL,
 } = require('./utility/constants');
 
 const { PORT = 3000 } = process.env;
@@ -69,10 +71,10 @@ app.post('/signin', celebrate({
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().min(8).required(),
+    password: Joi.string().min(8).max(30).required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i),
+    avatar: Joi.string().regex(regexURL),
   }),
 }), createUser);
 
@@ -83,16 +85,12 @@ app.use('/cards', require('./routes/cards'));
 
 app.use(errorLogger);
 
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND_CODE).send({ message: 'Неверный путь' });
+app.use((req, res, next) => {
+  next(new NotFoundError('Неверный путь'));
 });
 
 app.use(errors());
-app.use((err, req, res, next) => {
-  const { statusCode = ERROR_DEFAULT_CODE, message } = err;
-  res.status(statusCode).send({ message: statusCode === ERROR_DEFAULT_CODE ? 'На сервере произошла ошибка' : message });
-  next();
-});
+app.use(centreErrors);
 
 app.listen(PORT, () => {
   console.log(`Сервер работает на порте ${PORT}`);
